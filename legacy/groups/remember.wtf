@@ -1,0 +1,399 @@
+
+# Please read documentation on generator formatting!
+
+# FOREIGN KEY RELATIONS
+
+providers*client_id||fk:clients:3
+binders*provider_id||fk:providers:3
+claims*binder_id||fk:binders:10
+payments*claim_id||fk:claims:2
+journals*loggable_id||fk:claims:2
+
+#EVERYTHING ELSE 
+
+>>addresses||addresses
+addresses*label||skip
+addresses*address||fullname
+addresses*address_1||address
+addresses*address_2||skip
+addresses*city||city
+addresses*state||state
+addresses*zip||zip
+addresses*assigned_type||skip
+addresses*assigned_id||skip
+>>binders||binders
+binders*name||date
+>>claims||claims
+
+claims*total_charges||num:1-9:3 ``$$tc``
+
+claims*insurance_paid||num:0-``@@tc / 4``$$ip``
+claims*patient_paid||num:0-``@@tc / 4``$$pp``
+claims*other_credits||num:0-``@@tc / 4``$$oc``
+claims*other_paid||num:0-``@@tc / 4``$$op``
+claims*original_account_balance||lit:``@@tc - @@ip - @@pp - @@oc - @@op``$$oab``
+claims*sum_payments||num:0-``@@tc / 5``$$sp``
+
+claims*claim_number||num:0-9:8
+claims*total_denied||dec
+claims*total_credits||dec
+claims*percentage_paid||percentdec>num:0-100+"."+num:0-9:2
+claims*payment_total||dec
+claims*copay_amount||dec
+claims*insurance_pay_amount||dec
+claims*other_pay_amount||dec
+claims*current_account_balance||lit:``@@oab - @@sp``
+
+
+
+claims*primary_insurance_plan_name||insurplan>coll:{Blue,Green,Yellow,Gold,Platinum}+" "+noun+" Insurance"
+claims*primary_insurance_group_number||num:0-9:5
+claims*secondary_insurance_plan_name||insurplan>
+claims*secondary_insurance_group_number||num:0-9:5
+claims*tax_id||crap
+claims*filing_entity||crap
+claims*date_of_illness||date
+claims*prior_authorization||lit:none
+claims*missing_address||lit:0
+claims*provider_id||fk:providers
+claims*claim_status||num:1-15
+claims*person_id||lit:1
+claims*referring_physician_name||fullname
+claims*financial_class||coll:{Original,Secondary}
+claims*placement_date||date
+claims*denial_code||code>num:0-9:5+"a"+num:0-5:2
+claims*denial_reason||reason>verb+"ing the wrong "+noun+" in a "+adjective+" manner."
+claims*bill_charge_type||lit:Visa
+claims*num_service_lines||num:1-30
+claims*is_appeal||lit:false
+claims*appeal_number||num:0-9000
+claims*diag_1||dec
+claims*diag_2||dec
+claims*diag_3||dec
+claims*diag_4||dec
+>>clients||clients
+clients*name||hospital
+clients*contract_start_date||date
+clients*contract_end_date||date
+clients*contact_name||fullname
+clients*contact_title||coll:{mr.,mrs.,ms.,sir.,sr.}
+clients*contact_phone||c_phone>
+clients*contact_email||c_email>
+clients*contact_fax||c_phone>
+clients*address_id||iter
+clients*percent_recovery||percentdec>
+clients*percent_commission||percentdec>
+clients*frequency_placement||coll:{Daily,Weekly,Monthly}
+clients*frequency_report||coll:{Daily,Weekly,Monthly}
+clients*account_manager||fullname
+clients*sales_manager||fullname
+clients*broker||>noun+" Brokerage Services"
+>>journals||journals
+journals*person_id||lit:1
+journals*title||>adjective+" Claim is "+verb+"ing out of control"
+journals*notes||story>
+journals*entry_type||models
+journals*loggable_type||lit:Claim
+>>patients||patients
+patients*name||fullname
+patients*birth_date||date
+patients*patient_address_id||iter
+patients*relationship||coll:{Brother,Father,Sister,Mother,Grandma}
+patients*gender||coll:{M,F}
+patients*patient_type||>crap:1+""+num:1-9
+patients*age_at_service||num:20-60
+patients*ssn||ssn>num:1-9:3+"-"+num:1-9:2+"-"+num:1-9:4
+patients*patient_insurance_id||code>
+patients*insured_name||fullname
+patients*insured_gender||coll:{M,F}
+patients*insured_address_id||fk:addresses:0
+patients*insured_employer||>coll:{Golden,Platinum,Honest}+" "+noun+" Consulting"
+patients*secondary_insurance_id||code>
+patients*secondary_insurance_name||insurplan>
+patients*claim_id||fk:claims
+>>payers||payers
+payers*payer_name||fullname
+payers*billing_address_id||fk:addresses:0
+payers*claim_id||fk:claims
+payers*payer_type||lit:Good
+>>providers||providers
+providers*name||fullname
+providers*provider_number||num:1-9:8
+providers*contact_name||fullname
+providers*contact_title||coll:{mr.,mrs.,sr.}
+providers*contact_phone||c_phone>
+providers*contact_email||c_email>
+providers*contact_fax||c_phone>
+providers*provider_address_id||fk:addresses:0
+providers*lockbox_address_id||fk:addresses:0
+providers*physician_address_id||fk:addresses:0
+providers*tax_id||code>
+providers*national_provider_identifier||num:1-9:10
+providers*provider_type||coll:{Hospital,Physician,DME}
+providers*billing_option||coll:{HFCA,UB,Both}
+>>payments||payments
+payments*payment_amount||dec
+payments*provider_id||fk:providers
+payments*binder_id||fk:binders
+payments*status||lit:new payment
+payments*claim_number||crap
+payments*posting_date||date
+payments*financial_class||num:1-9
+payments*payment_type||lit:Cash
+payments*invoice_number||num:1-9:13
+payments*account_number||num:1-9:13
+>>rules||rules
+rules*assignable_type||lit:Claim
+rules*assignable_id||iter
+rules*last_called_on||date
+rules*rule_type_id||lit:1
+>>provider_name_caches||provider_name_caches
+>>client_name_caches||client_name_caches
+claims*claim_state||num:1-4
+claims*is_escalated||lit:0
+claims*is_triaged||lit:0
+claims*status_changed_at||>num:2009-2012+"-0"+num:1-9+"-0"+num:1-9
+
+
+
+#LOCUS GENERATORS 
+
+
+
+#FK
+>>company_dictionaries||company_dictionaries
+company_dictionaries*company_id||fk:companies
+company_dictionaries*dictionary_id||fk:dictionaries
+company_dictionaries*revenue_pct||lit:50.43
+company_dictionaries*level||lit:1
+
+
+#END FK
+
+>>companies||companies
+companies*name||>!adjective+" "+!noun+" "+!noun+" "+coll:{Incorporated,Inc,Company,LLC,GmbH,Corp,Corporation,LTD,AG,GIE,UD,CIC}+""``$$cnm``
+companies*description||>!verb+"ing to be number "+num:1-10+" in the business of "+noun+" "+verb+"ing, ``@@cnm`` have devoted themselves "+adjective+"ly to the pursuit of creating the perfect "+noun+". Showing "+coll:{Positive,Negative}+" revenue in the "+coll:{1st,2nd,3rd,4th}+" quarter of "+num:2005-2012+", they dominated the markets."
+companies*sedol||num:0-9:10
+companies*bvd_id||crap
+companies*isin_number||num
+companies*exchange||dec
+companies*ticker||dec
+companies*address_1||lit:``@@cnm``
+companies*address_2||address
+companies*city||city
+companies*area||state
+companies*postcode||zip
+companies*country_code||num:1-9:3
+companies*longitude||>coll:{,-}+""+num:0-179+"."+num:0-9:4
+companies*latitude||>coll:{,-}+""+num:0-89+"."+num:0-9:4
+companies*phone||c_phone>
+companies*website||domain>
+companies*date_of_incorporation||date
+companies*date_of_ipo||num:1950-2010
+companies*market_cap||dec
+companies*total_cap||dec
+companies*cash||dec
+companies*cash_flow||dec
+companies*cash_at_beginning||num:500000-60000000``$$cab``
+companies*cash_at_end||num:0-9000000``$$cae``
+companies*net_cash_at_beginning||num:500000-``@@cab``
+companies*net_cash_at_end||num:0-``@@cae``
+companies*financial_revenue||dec
+companies*assets||dec
+companies*sales||dec
+companies*operating_revenue||num:600-10000000
+companies*p_n_l||dec
+companies*operating_p_n_l||dec
+companies*ebitda||dec
+companies*tier_1_ratio||dec
+companies*current_ratio||dec
+companies*total_capital_ratio||dec
+companies*gearing_ratio||dec
+companies*solvency_ratio||dec
+companies*shares_outstanding||dec
+companies*share_price_at_end||num:500-1000 ``$$pae``
+companies*share_price_at_high||num:``@@pae``-2000
+companies*share_price_at_low||num:0-``@@pae``
+companies*earnings_per_share||dec
+companies*price_to_earnings_high||num:10-50``$$pteh``
+companies*price_to_earnings_low||num:0-``@@pteh - 9``$$ptel``
+companies*price_to_earnings_avg||lit:``@@pteh + @@ptel / 2``
+companies*long_term_debt||dec
+companies*debt_to_equity||dec
+companies*net_debt||dec
+companies*naics||dec
+companies*secondary_naics||dec
+companies*number_of_employees||num:2-400000
+companies*assignee_id||num:1-7
+companies*reviewer_id||num:1-7
+companies*status||num:1-4
+companies*first_included_year||>"19"+num:90-99 ``$$fiy``
+companies*last_included_year||lit:``@@fiy + 10``
+companies*previous_name||crap
+companies*name_change_date||date
+companies*bvd_account_number||crap
+companies*national_id_number||crap
+companies*national_id_label||crap
+companies*national_id_type||crap
+companies*status_timestamp||date
+companies*status_updated_by_id||iter
+
+
+
+>>dictionary_locus_caches||no!
+>>dictionary_name_caches||no!
+>>dictionary_rules||no!
+>>dictionary_status_caches||no!
+>>dictionary_update_caches||no!
+>>financials||no!
+>>foundations||no!
+>>industries||no!
+>>library_rule_definitions||no!
+>>library_rules||no!
+>>locations||no!
+>>locus_rules||no!
+>>marker_rules||no!
+>>market_data||no!
+>>nace_codes||no!
+>>naics_core_codes||no!
+>>naics_primary_codes||no!
+>>notes||no!
+>>people||no!
+>>performance_charts||no!
+>>performance_tables||no!
+>>query_clauses||no!
+>>query_rules||no!
+>>query_statements||no!
+>>recent_accesses||no!
+>>segments||no!
+>>sic_core_codes||no!
+>>sic_primary_codes||no!
+>>stock_prices||no!
+>>thesauri||no!
+>>thesaurus_folders||no!
+>>thesaurus_rules||no!
+>>upload_errors||no!
+>>uploads||no!
+>>users||no!
+
+>>loci||loci
+loci*complete||coll:{true}
+loci*e_locus_1||loci
+loci*e_locus_2||loci
+loci*e_locus_field_coord_value||coll:{Enterprise}
+loci*e_locus_level_coord_value||coll:{Company}
+loci*e_locus_importance_coord_value||coll:{First}
+loci*e_locus_temporal_coord_value||coll:{First,Second}
+loci*e_locus_e_prod_marker||coll:{Activity-Product,Resource-Product}
+loci*e_locus_e_proc_marker||coll:{In-house,Outsourced}
+loci*i_locus_1||loci
+loci*i_locus_2||loci
+loci*i_locus_field_coord_value||coll:{Enterprise}
+loci*i_locus_level_coord_value||coll:{Company}
+loci*i_locus_importance_coord_value||coll:{Second}
+loci*i_locus_temporal_coord_value||coll:{First,Second}
+loci*i_locus_e_prod_marker||coll:{Activity-Product,Resource-Product}
+loci*i_locus_e_proc_marker||skip
+loci*fi_locus_1||loci
+loci*fi_locus_2||loci
+loci*fi_locus_field_coord_value||coll:{Intermediary}
+loci*fi_locus_level_coord_value||coll:{Company}
+loci*fi_locus_importance_coord_value||skip
+loci*fi_locus_temporal_coord_value||coll:{First}
+loci*fi_locus_intermediary_type_marker||coll:{Agent,Businesses,Seller,Subsidizer}
+loci*si_locus_1||loci
+loci*si_locus_2||loci
+loci*si_locus_field_coord_value||coll:{Intermediary}
+loci*si_locus_level_coord_value||coll:{Company}
+loci*si_locus_importance_coord_value||skip
+loci*si_locus_temporal_coord_value||coll:{Second}
+loci*si_locus_intermediary_type_marker||skip
+loci*c_locus_1||loci
+loci*c_locus_2||loci
+loci*c_locus_field_coord_value||coll:{Customer}
+loci*c_locus_level_coord_value||coll:{Company}
+loci*c_locus_importance_coord_value||coll:{First}
+loci*c_locus_temporal_coord_value||coll:{First,Second}
+loci*c_locus_c_prod_marker||coll:{Activity-Product,Div,None,Resource-Product}
+loci*c_locus_c_type_marker||coll:{Businesses,Businesses and Consumers,Businesses and Consumers and Government,Businesses and Government,Consumers,Government}
+loci*pc_locus_1||loci
+loci*pc_locus_2||loci
+loci*pc_locus_c_rel_type_marker||coll:{Information,Payment,Product}
+loci*pc_locus_field_coord_value||coll:{Customer}
+loci*pc_locus_level_coord_value||coll:{Company}
+loci*pc_locus_importance_coord_value||coll:{Second}
+loci*pc_locus_temporal_coord_value||coll:{First,Second}
+loci*pc_locus_c_prod_marker||coll:{Activity-Product,Div,None,Resource-Product}
+loci*pc_locus_c_type_marker||coll:{Businesses,Businesses and Consumers,Consumers,Government}
+loci*cs_locus_1||loci
+loci*cs_locus_2||loci
+loci*cs_locus_field_coord_value||coll:{Customer}
+loci*cs_locus_level_coord_value||coll:{Subordinate Resource}
+loci*cs_locus_e_prod_locus_marker||skip
+loci*cf_locus_1||loci
+loci*cf_locus_2||loci
+loci*cf_locus_field_coord_value||coll:{Customer}
+loci*cf_locus_level_coord_value||coll:{Final Resource}
+loci*cf_locus_e_prod_locus_marker||skip
+loci*cw_locus_1||loci
+loci*cw_locus_2||loci
+loci*cw_locus_field_coord_value||coll:{Customer}
+loci*cw_locus_level_coord_value||coll:{Work Group}
+loci*cw_locus_e_prod_locus_marker||skip
+loci*cw_locus_wg_prod_marker||skip
+loci*cd_locus_1||loci
+loci*cd_locus_2||loci
+loci*cd_locus_field_coord_value||coll:{Customer}
+loci*cd_locus_level_coord_value||coll:{Department}
+loci*cd_locus_d_prod_marker||skip
+loci*c_of_c_locus_1||loci
+loci*c_of_c_locus_2||loci
+loci*c_of_c_locus_field_coord_value||coll:{Customer of Customer}
+loci*c_of_c_locus_level_coord_value||coll:{Company}
+loci*c_of_c_locus_c_type_marker||coll:{Businesses,Businesses and Consumers,Businesses and Consumers and Government,Businesses and Government,Consumers}
+loci*c_of_cs_locus_1||loci
+loci*c_of_cs_locus_2||loci
+loci*c_of_cs_locus_field_coord_value||coll:{Customer of Customer}
+loci*c_of_cs_locus_level_coord_value||coll:{Subordinate Resource}
+loci*c_of_cs_locus_c_prod_locus_marker||skip
+loci*c_of_cf_locus_1||loci
+loci*c_of_cf_locus_2||loci
+loci*c_of_cf_locus_field_coord_value||coll:{Customer of Customer}
+loci*c_of_cf_locus_level_coord_value||coll:{Final Resource}
+loci*c_of_cf_locus_c_prod_locus_marker||skip
+loci*c_of_cw_locus_1||loci
+loci*c_of_cw_locus_2||loci
+loci*c_of_cw_locus_field_coord_value||coll:{Customer of Customer}
+loci*c_of_cw_locus_level_coord_value||coll:{Work Group}
+loci*c_of_cw_locus_c_prod_locus_marker||skip
+loci*c_of_cw_locus_wg_prod_marker||skip
+loci*c_of_cd_locus_1||loci
+loci*c_of_cd_locus_2||loci
+loci*c_of_cd_locus_field_coord_value||coll:{Customer of Customer}
+loci*c_of_cd_locus_level_coord_value||coll:{Department}
+loci*c_of_cd_locus_d_prod_marker||skip
+
+>>dictionaries||dictionaries
+dictionaries*name||>!noun+" "+verb+" Company"
+dictionaries*description||crap
+dictionaries*unique_id||current_dex
+dictionaries*name||crap
+dictionaries*locus_id||fk:loci
+dictionaries*ancestry||skip
+dictionaries*is_child||lit:0
+dictionaries*status||lit:3
+dictionaries*assignee_id||skip
+dictionaries*reviewer_id||skip
+dictionaries*status_timestamp||skip
+dictionaries*status_updated_by_id||skip
+
+
+patients*first_name||firstname
+patients*last_name||lastname
+claims*total_paid||dec
+>>rule_actions||rule_actions!
+
+>>attachments||no!
+>>audits||no!
+>>company_warnings||no!
+>>delayed_jobs||no!

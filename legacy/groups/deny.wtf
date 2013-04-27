@@ -1,0 +1,16 @@
+file_name
+is_visible
+deleted_at
+created_at
+updated_at
+file_content_type
+file_file_size
+encrypted_password
+reset_password_token
+reset_password_sent_at
+sign_in_count
+current_sign_in_at
+last_sign_in_at
+current_sign_in_ip
+last_sign_in_ip
+binder_type
