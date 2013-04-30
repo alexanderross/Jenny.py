@@ -1,7 +1,5 @@
 from generator.collection_generator import CollectionGenerator
-from reader.http_socket import HTTPSocket
 from reader.json_reader import JSONReader
-from reader.rss_reader import RSSReader
 from reader.html_reader import HTMLReader as xml_read
 
 class DynamicCollection(CollectionGenerator):

@@ -152,6 +152,6 @@ class HTMLReader(Reader):
 
 		return return_data
 
-return_data[key] = self._recurse_scope_on_hash(node,self.strip_current_target(current_target,scope_targets)[1:],get_regex)
+#return_data[key] = self._recurse_scope_on_hash(node,self.strip_current_target(current_target,scope_targets)[1:],get_regex)
 
 

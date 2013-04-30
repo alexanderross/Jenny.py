@@ -27,7 +27,7 @@ class ActiveRecordReader(Reader):
 					currModel = line.split('"')[1]
 					return_hash[currModel]=dict()		
 				elif("t." in line and not currModel == ""):
-					return_hash[currModel][line.split('"')[1]] = (line.split("t.")[1].split(" ")[0]).strip()
+					return_hash[currModel][line.split('"')[1]] = {"type":ActiveRecordReader.translate_type((line.split("t.")[1].split(" ")[0]).strip())}
 
 		return return_hash
 

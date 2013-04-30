@@ -34,7 +34,7 @@ class DefaultConfiguration:
 		"active_record":{
 			"default_primary_key": "id"
 		},
-		"source":"/Users/tyemilldeveloper/Documents/TM/locus.r5/db/schema.rb",
+		"source":"example.sql",
 		"destination":"crap.xxl",
 		"rootpath":""
 	}
@@ -73,8 +73,13 @@ class ConfigurationManager:
 
 
 	def load_genspec(self, spec_name):
-		self.data["_genspec"][spec_name] = JSONReader.read("/".join([self.data["genspec_directory"],spec_name+self.data["genspec_extension"]]))
-		self.current_genspec = spec_name
+		path = "/".join([self.data["genspec_directory"],spec_name+self.data["genspec_extension"]])
+		if(os.path.exists(path)):
+			self.data["_genspec"][spec_name] = JSONReader.read("/".join([self.data["genspec_directory"],spec_name+self.data["genspec_extension"]]))
+			self.current_genspec = spec_name
+		else:
+			self.data["_genspec"][spec_name] = dict()
+			self.current_genspec = spec_name
 
 	def get_current_gemspec(self):
 		if(self.current_genspec):

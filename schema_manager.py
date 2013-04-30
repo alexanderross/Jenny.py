@@ -18,10 +18,12 @@ class SchemaManager:
 
 	def load_preferences(self, preferences, gen_manager):
 		self.current_gen_manager = gen_manager
-		if("_curr_generators" in preferences):
+		if("_curr_generators" in preferences.keys()):
 			gen_manager.load_hash(preferences["_curr_generators"])
+			print self.WHOAMI+" Generators after adding "+str(len(preferences["_curr_generators"].keys()))+" from configuration:"
+		else:
+			print self.WHOAMI+" Loaded no additional generators"
 
-		print self.WHOAMI+" Generators after adding "+str(len(preferences["_curr_generators"].keys()))+" from configuration:"
 		print "----"
 		print " , ".join(gen_manager.registered_generators.keys())
 		print "----"

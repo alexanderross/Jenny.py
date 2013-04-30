@@ -1,6 +1,6 @@
 from variable import Variable
-from arg_manager import ArgManager as AM
 from reader.active_record_reader import ActiveRecordReader
+from reader.sql_reader import SQLReader
 from writer.sql_writer import SQLWriter
 from node.node_factory import NodeFactory
 from configuration_manager import ConfigurationManager
@@ -8,15 +8,19 @@ from schema_manager import SchemaManager as sam
 from generator_manager import GeneratorManager 
 
 
-target_genspec = "locus"
+target_genspec = "wordy"
 
 pref_manager = ConfigurationManager()
 pref_manager.load_genspec(target_genspec)
 pref_manager.save_config()
 
 schema_path = pref_manager.data["source"]
-
-schema_manager = sam(NodeFactory.process_schema(ActiveRecordReader.read(schema_path)))
+schema_type = schema_path.split(".")[-1].strip()
+if(schema_type == "sql"):
+	schema_path = SQLReader.read(schema_path)
+else:
+	schema_path = ActiveRecordReader.read(schema_path)
+schema_manager = sam(NodeFactory.process_schema(schema_path))
 generator_manager = GeneratorManager(pref_manager.get_generator_preload_paths(), pref_manager.data["_cache"])
 print "JENNY.py V2"
 print ""
