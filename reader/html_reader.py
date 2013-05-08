@@ -35,7 +35,7 @@ class HTMLReader(Reader):
 
 	def to_hash(self,scope_targets=False):
 		if(scope_targets):
-			scope_targets = self._process_targets(scope_targets)
+			#scope_targets = self._process_targets(scope_targets)
 			return self._recurse_scope_on_hash(self.read_data,scope_targets)
 		else:
 			return self._to_unscoped_hash(self.read_data)
@@ -71,7 +71,6 @@ class HTMLReader(Reader):
 		for item in range(0,len(scope_targets)):
 			if(len(current_shared) == 0):
 				current_shared = scope_targets[0]
-
 			for subitem in range(0,len(validation_split)):
 				if(len(current_shared)-1 < subitem):
 					if(current_shared[subitem] == scope_targets[subitem]):
@@ -102,55 +101,91 @@ class HTMLReader(Reader):
 	def _recurse_scope_on_hash(self,data,scope_targets,formatter=None,lock = False):
 		return_data = []
 
-		current_target = None
+		current_target = original_target= None
 		get_index = None
 		get_regex = None
+
 		if(len(scope_targets[0]) == 0):
+
 			if(formatter):
+
 				to_return = formatter.match(data.text)
 				if(to_return):
+					print "MATCHED", to_return.group(1)
 					return to_return.group(1)
 				else:
 					return ""
 			else:
-				return data.text
+				return data.text.strip()
 		else:
-			current_target = scope_targets[0][0]
+			current_target = original_target = scope_targets[0][0]
 
-		if(len(scope_targets[0])==1):
-			if("_@_" in current_target):
-				lock = True
 
-			if(current_target.count(HTMLReader.INDEX[0]) == current_target.count(HTMLReader.INDEX[1]) == 1):
-				current_target = current_target.split(HTMLReader.INDEX[0])
-				tail_split = current_target[1].split(HTMLReader.INDEX[1])
-				get_index = int(tail_split[0])
-				current_target = current_target[0]+tail_split[1]
 
-			re_split = current_target.split(HTMLReader.RE)
-			new_ct = re_split[0]
-			if(len(current_target.split(HTMLReader.RE)) >= 3):
-				if(len(current_target)==3):
-					re_split = re_split[1]
+		if(len(scope_targets) == 1):
+			if(len(scope_targets[0])==1):
+
+				#split it up pre-emptively for the RE check
+				#new_ct would be a persist for the target minus RE
+				re_split = current_target.split(HTMLReader.RE)
+				new_ct = re_split[0]
+
+				if(len(current_target.split(HTMLReader.RE)) >= 3): #does current contain a regular expression?
+					#attempt to compile RE, store the re in get_regex and remove it from the current target
+					if(len(current_target)==3):
+						re_split = re_split[1]
+					else:
+						re_split = "".join(re_split[1:len(re_split)-1])
+					if(not "(" in re_split and not ")" in re_split): # A janky check for matching parentheses 
+						re_split =  "("+re_split+")" #add em.
+
+					get_regex = re.compile(re_split)
+
+
+					current_target = new_ct
+
+				if(current_target.count(HTMLReader.INDEX[0]) == current_target.count(HTMLReader.INDEX[1]) == 1): #Has an indexed selector
+					#remove index selector from target, store val in get_index.
+					current_target = current_target.split(HTMLReader.INDEX[0])
+					tail_split = current_target[1].split(HTMLReader.INDEX[1])
+					get_index = int(tail_split[0])
+					current_target = current_target[0]+tail_split[1]
+		
+
+				#scope_targets[0][0]=current_target# set it backwards so strip matches the tags across recursions
+				index = 0
+
+				new_scopes = self.strip_current_target(original_target,scope_targets)
+
+				for node in data.select(current_target):
+					if(get_index != None):
+						if(index == get_index):
+			
+							return_data.append(self._recurse_scope_on_hash(node,new_scopes,get_regex))
+						index = index + 1
+					else:
+						return_data.append(self._recurse_scope_on_hash(node,new_scopes,get_regex))
+			else: #l of i > 1
+				for node in data.select(current_target):
+					return_data = return_data +  self._recurse_scope_on_hash(node,self.strip_current_target(original_target,scope_targets),get_regex)
+
+		else: # l-s_c > 1
+			return_data = dict()
+			new_scopes = self.strip_current_target(original_target,scope_targets)
+			print current_target, len(data.select(current_target))
+			print data
+			for node in data.select(current_target):
+				key = self._recurse_scope_on_hash(node,[new_scopes[0]],get_regex)
+				if(len(key)==0):
+					print "WARN - KEY is 0"
+				elif(len(key)!=1):
+					key = key[0]
 				else:
-					re_split = "".join(re_split[1:len(re_split)-1])
-				if(not "(" in re_split and not ")" in re_split): # A janky check for matching parentheses 
-					re_split =  "("+re_split+")" #add em.
-
-				get_regex = re.compile(re_split)
-
-				current_target = new_ct
-
-			scope_targets[0][0]=current_target# set it backwards so strip matches the tags across recursions
-
-		#recurse and knock out sub-indexes until locked
-		#if not locked,
-			#iterate over current sub only, remove sub across all targets.
-		#if locked, 
-			#if total len is 1, expect to append results into a list
-			#if total len is above one, iterate over current t sub to get keys and for that key, find the target
-
+					key = key[0]
+				print new_scopes[1:]
+				return_data[key] = self._recurse_scope_on_hash(node,new_scopes[1:],get_regex)
 		return return_data
+
 
 #return_data[key] = self._recurse_scope_on_hash(node,self.strip_current_target(current_target,scope_targets)[1:],get_regex)
 

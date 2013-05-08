@@ -14,7 +14,7 @@ class DynamicCollection(CollectionGenerator):
 	#
 	#
 	resource_pool = dict() # declaring this dict() outside of a method essentially makes this shared among all instances...
-	DO_CACHE = True
+	DO_CACHE = False
 	DYN_SYMBOL = "live>"
 
 	#not sure if i'm leveraging a bug, but it seems cool.
