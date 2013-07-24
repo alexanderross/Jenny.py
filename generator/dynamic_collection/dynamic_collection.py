@@ -38,6 +38,7 @@ class DynamicCollection(CollectionGenerator):
 			if(format=="xml" or format=="rss" or format=="html"):
 				read_data = xml_read.read(url,True)
 				temp = read_data.to_hash(targets)
+				print temp
 			elif(format=="json"):
 				temp = JSONReader.read(url,True)
 		if(self.DO_CACHE):

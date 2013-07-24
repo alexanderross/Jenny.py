@@ -397,3 +397,11 @@ claims*total_paid||dec
 >>audits||no!
 >>company_warnings||no!
 >>delayed_jobs||no!
+>>archdioceses||no!
+>>games||no!
+>>players||
+>>sub_records||no!
+>>teams||no!
+players*name||fullname
+players*number||num:0-9:2
+players*team_id||num:0-60

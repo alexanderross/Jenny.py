@@ -147,6 +147,9 @@ class HTMLReader(Reader):
 	def _recurse_scope_on_hash(self,data,scope_targets, formatter = None,lock = False):
 		#Will change to dict if 
 		return_data = []
+		
+		if(lock):
+			print "LOCKY"
 
 		current_target = original_target= None
 		get_index = None
@@ -226,19 +229,23 @@ class HTMLReader(Reader):
 
 		else: # Len is *-N, we don't care about ct's length, for we just recurse on it by itself.
 			return_data = dict()
-			new_scopes = self.strip_current_target(original_target,scope_targets)
-			print current_target, len(data.select(current_target))
-			print data
-			for node in data.select(current_target):
-				key = self._recurse_scope_on_hash(node,[new_scopes[0]],get_regex)
-				if(len(key)==0):
-					print "WARN - KEY is 0"
-				elif(len(key)!=1):
-					key = key[0]
-				else:
-					key = key[0]
-				print new_scopes[1:]
-				return_data[key] = self._recurse_scope_on_hash(node,new_scopes[1:],get_regex)
+			if(lock):
+				print "LOCKED UNDER ",data,scope_targets
+				key = self._recurse_scope_on_hash(data,[scope_targets[0]],get_regex)[0]
+				print key
+				return_data[key]= self._recurse_scope_on_hash(data,scope_targets[1:],get_regex,scope_targets[0][0]==scope_targets[1][0])
+			else:
+				new_scopes = self.strip_current_target(original_target,scope_targets)
+				for node in data.select(current_target):
+					key = self._recurse_scope_on_hash(node,[new_scopes[0]],get_regex)
+					if(len(key)==0):
+						print "WARN - KEY is 0"
+					elif(len(key)!=1):
+						key = key[0]
+					else:
+						key = key[0]
+
+					return_data[key] = self._recurse_scope_on_hash(node,new_scopes[1:],get_regex,scope_targets[0][0]==scope_targets[1][0])
 		return return_data
 
 
