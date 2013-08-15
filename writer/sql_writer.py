@@ -13,6 +13,7 @@ class SQLWriter(Writer):
 	block_max_entries = 400
 	file_max_entries = 100000
 	null_sequence="NULL"
+	write_buffers = dict() #write buffer for each model to be written
 
 
 	def __init__(self, destination, preferences):
@@ -30,6 +31,12 @@ class SQLWriter(Writer):
 		for model in head_node.children:
 			self.write_model(model, base_count)
 		self.writer.close()
+
+	def write_collection(self, collection):
+		pass
+
+	def build_collection_level(self, collection):
+		pass
 
 	def write_model(self, model, count, augmented_index=[], buffer_output=False):
 
@@ -64,7 +71,7 @@ class SQLWriter(Writer):
 			m_index+=1
 
 	def dump_buffer(self, index=""):
-		#Will there ever be episodes of COPS based in Canada? 
+		#Will there ever be episodes of COPS based in Canadian cities? 
 		if(index == ""):
 			for item in self.write_buffers.values():
 				self.writer.write(item)
