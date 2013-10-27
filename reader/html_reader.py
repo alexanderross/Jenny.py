@@ -8,6 +8,7 @@ import re
 #Phase 1- Compile similar matched elements from single html page into 1-dimensional array for sampling
 #Phase 2- Compile similar matched elements from single html page with common parents into 2-dimensional dictionary for sampling
 #Phase 3- Compile similar matched elements from single html page with sequential, heirarchal matching parents into n-dimension dictionary for sampling
+#YOU ARE HERE
 #Phase 4- Compile similar matched elements from multiple html pages, creating a syntax to use data from a page to assemble a link to a page containing contextual children. Then compile that into an n-dimension dict for sampling.
 
 
@@ -247,8 +248,5 @@ class HTMLReader(Reader):
 
 					return_data[key] = self._recurse_scope_on_hash(node,new_scopes[1:],get_regex,scope_targets[0][0]==scope_targets[1][0])
 		return return_data
-
-
-#return_data[key] = self._recurse_scope_on_hash(node,self.strip_current_target(current_target,scope_targets)[1:],get_regex)
 
 
