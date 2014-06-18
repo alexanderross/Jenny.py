@@ -31,6 +31,7 @@ class DynamicCollection(CollectionGenerator):
 		temp = None
 		self.cache_address = self.get_cache_address(url,targets)
 
+		#the fuck?
 		if(self.cache_address in self.resource_pool.keys() and 1==0):
 			rtn_string = rtn_string + " from cache"
 			temp = self.resource_pool[self.cache_address]
@@ -38,18 +39,19 @@ class DynamicCollection(CollectionGenerator):
 			if(format=="xml" or format=="rss" or format=="html"):
 				read_data = xml_read.read(url,True)
 				temp = read_data.to_hash(targets)
-				print temp
 			elif(format=="json"):
 				temp = JSONReader.read(url,True)
 		if(self.DO_CACHE):
 			self.resource_pool[self.cache_address] = temp
+		else:
+			print "Caching Disabled for Dynamic collection. You did this. Why?"
 		
 		rtn_string = rtn_string+ " as "+format+ ", resulting in "+str(len(temp))
 		if(len(targets)>1):
 			rtn_string = rtn_string + " keys to a "+str(len(targets))+"-level dictionary"
 		else:
 			rtn_string = rtn_string + " items in a flat collection"
-		print rtn_string
+		print "----| "+ rtn_string+" |----"
 
 		self.complex = (not isinstance(temp, list))
 		self.collection = temp

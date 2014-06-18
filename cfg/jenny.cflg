@@ -23,9 +23,13 @@
     }
    }, 
    "wp_allowphp_functions": {
-    "function": {}, 
+    "function": {
+     "gen": "$k1=drax"
+    }, 
     "id": {}, 
-    "name": {}
+    "name": {
+     "gen": "$k2=drax($k1)"
+    }
    }, 
    "wp_commentmeta": {
     "comment_id": {}, 
@@ -74,81 +78,6 @@
     "option_id": {}, 
     "option_name": {}, 
     "option_value": {}
-   }, 
-   "wp_postmeta": {
-    "id": {}, 
-    "meta_id": {}, 
-    "meta_key": {}, 
-    "meta_value": {}, 
-    "post_id": {}
-   }, 
-   "wp_posts": {
-    "ID": {}, 
-    "comment_count": {}, 
-    "comment_status": {}, 
-    "guid": {}, 
-    "id": {}, 
-    "menu_order": {}, 
-    "ping_status": {}, 
-    "pinged": {}, 
-    "post_author": {}, 
-    "post_content": {}, 
-    "post_content_filtered": {}, 
-    "post_date": {}, 
-    "post_date_gmt": {}, 
-    "post_excerpt": {}, 
-    "post_mime_type": {}, 
-    "post_modified": {}, 
-    "post_modified_gmt": {}, 
-    "post_name": {}, 
-    "post_parent": {}, 
-    "post_password": {}, 
-    "post_status": {}, 
-    "post_title": {}, 
-    "post_type": {}, 
-    "to_ping": {}
-   }, 
-   "wp_term_relationships": {
-    "id": {}, 
-    "object_id": {}, 
-    "term_order": {}, 
-    "term_taxonomy_id": {}
-   }, 
-   "wp_term_taxonomy": {
-    "count": {}, 
-    "description": {}, 
-    "id": {}, 
-    "parent": {}, 
-    "taxonomy": {}, 
-    "term_id": {}, 
-    "term_taxonomy_id": {}
-   }, 
-   "wp_terms": {
-    "id": {}, 
-    "name": {}, 
-    "slug": {}, 
-    "term_group": {}, 
-    "term_id": {}
-   }, 
-   "wp_usermeta": {
-    "id": {}, 
-    "meta_key": {}, 
-    "meta_value": {}, 
-    "umeta_id": {}, 
-    "user_id": {}
-   }, 
-   "wp_users": {
-    "ID": {}, 
-    "display_name": {}, 
-    "id": {}, 
-    "user_activation_key": {}, 
-    "user_email": {}, 
-    "user_login": {}, 
-    "user_nicename": {}, 
-    "user_pass": {}, 
-    "user_registered": {}, 
-    "user_status": {}, 
-    "user_url": {}
    }
   }
  }, 

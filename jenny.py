@@ -34,7 +34,7 @@ out = pref_manager.data["destination"]
 #Import preference, write out diff between prefs and actual schema.
 
 
-print "Writing 10 Entries in sql"
+print "Writing 10 Entries in sql to " + out
 data_writer = SQLWriter(out,pref_manager.data["sql"])
 data_writer.write(schema_manager.current_schema,10)
 

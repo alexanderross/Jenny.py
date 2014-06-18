@@ -139,6 +139,9 @@ class HTMLReader(Reader):
 	#
 	#</html>
 
+	#I'll keep referencing an N-1, 1-N or something like that. This is indicative of the current state of 
+	#scope_targets.
+
 	#data - The current node (starts as document)
 	#scope_targets - The 2d array containing target elements
 	#formatter - The regular expression defining how to process the data
@@ -148,8 +151,6 @@ class HTMLReader(Reader):
 		#Will change to dict if 
 		return_data = []
 		
-		if(lock):
-			print "LOCKY"
 
 		current_target = original_target= None
 		get_index = None
@@ -161,7 +162,6 @@ class HTMLReader(Reader):
 			if(formatter): #Regular expression to match?
 				to_return = formatter.match(data.text)
 				if(to_return):
-					print "MATCHED", to_return.group(1)
 					return to_return.group(1)
 				else:
 					return ""
@@ -230,9 +230,7 @@ class HTMLReader(Reader):
 		else: # Len is *-N, we don't care about ct's length, for we just recurse on it by itself.
 			return_data = dict()
 			if(lock):
-				print "LOCKED UNDER ",data,scope_targets
 				key = self._recurse_scope_on_hash(data,[scope_targets[0]],get_regex)[0]
-				print key
 				return_data[key]= self._recurse_scope_on_hash(data,scope_targets[1:],get_regex,scope_targets[0][0]==scope_targets[1][0])
 			else:
 				new_scopes = self.strip_current_target(original_target,scope_targets)

@@ -60,6 +60,9 @@ class ConfigurationManager:
 
 	def load_cached_colls(self):
 
+		if not os.path.exists(self.data["cache_path"]):
+			os.mkdir(self.data["cache_path"])
+
 		listing = os.listdir(self.data["cache_path"])
 		self.data["_cache"] = dict()
 		for infile in listing:
